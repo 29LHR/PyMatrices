@@ -1,4 +1,4 @@
-import matplotlib.pyplot as plt
+lazy import matplotlib.pyplot as plt
 
 #Custom Error Messages  
 class IncompatibleMatrixError(Exception):
