@@ -27,7 +27,7 @@ The Matrix class is the parent of all other classes. It sets out all of the key 
 - height: The number of rows in the matrix
 - width: The number of columns in the matrix
 
-## intMatrix
+## numMatrix
 
 A child of the **Matrix** class which can only contain number values within its matrix.
 

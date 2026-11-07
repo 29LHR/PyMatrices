@@ -40,9 +40,18 @@ class Matrix:
     def __str__(self):
         return self.printMatrix()
 
-class intMatrix(Matrix):
+class numMatrix(Matrix):
     def __init__(self, vals : list):
-        super().__init__(vals)
+        nVals = []
+        for row in vals:
+            nRow = []
+            for i in row:
+                if type(i) == int or type(i) == float:
+                    nRow.append(i)
+                else:
+                    raise TypeError('A numMatrix needs to have integer or float values')
+            nVals.append(nRow)
+        super().__init__(nVals)
     
     def plot(self, label, color, marker):
         x = [col[0] for col in self._cols]
@@ -55,15 +64,15 @@ class intMatrix(Matrix):
         plt.plot(xA, yA, color=color)
 
 #Defaults intMatrices    
-class unitSquare(intMatrix):
+class unitSquare(numMatrix):
     def __init__(self):
         super().__init__([[0,1,1,0],[0,0,1,1]])
-class identity(intMatrix):
+class identity(numMatrix):
     def __init__(self):
         super().__init__([[1,0], [0,1]])
         
 #Arithmetic Functions
-def multiply(A : intMatrix, B : intMatrix)-> intMatrix:
+def multiply(A : numMatrix, B : numMatrix)-> numMatrix:
     def multiplyPts(a: list, b: list):
         num = 0
         for i in range(len(a)):
@@ -97,4 +106,3 @@ def multiply(A : intMatrix, B : intMatrix)-> intMatrix:
         valsC.append(apdList)
     
     return intMatrix(valsC)
-    
