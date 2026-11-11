@@ -57,11 +57,13 @@ class numMatrix(Matrix):
         x = [col[0] for col in self._cols]
         y = [col[1] for col in self._cols]
         plt.scatter(x,y, label=label, color=color, marker=marker)
-        plt.plot(x,y, color=color)
         
-        xA = x[1:]; yA = y[1:]
-        xA.append(x[0]); yA.append(y[0])
-        plt.plot(xA, yA, color=color)
+        if self.width > 2:
+            plt.plot(x,y, color=color)
+            
+            xA = x[1:]; yA = y[1:]
+            xA.append(x[0]); yA.append(y[0])
+            plt.plot(xA, yA, color=color)
 
 #Defaults intMatrices    
 class unitSquare(numMatrix):

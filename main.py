@@ -2,6 +2,7 @@ from tkinter import Tk, Toplevel, Label, Entry, Button, Frame, Menu
 from typing import Union
 from pyMatrices import numMatrix, unitSquare, identity, multiply
 lazy import matplotlib.pyplot as plt
+lazy import random as r
 
 class numMatrixGUI():
     def __init__(self, root : Union[Tk, Toplevel, Frame], matrix : numMatrix, name : str):
@@ -12,7 +13,9 @@ class numMatrixGUI():
     
     def __createGUI(self)-> None:
         def plot():
-            self.__matrix.plot(self.__name,"#7C0101",'o')
+            options = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F']
+            color = f'#{r.choice(options)}{r.choice(options)}{r.choice(options)}{r.choice(options)}{r.choice(options)}{r.choice(options)}'
+            self.__matrix.plot(self.__name,color,'o')
             
         frame = self.__root
         title = Label(frame, text=self.__name, anchor='center')
@@ -94,17 +97,26 @@ class gui:
         self.__root.title('Matrix Calculator')
         self.__root.geometry('400x400')
         
-        #Create a Matrix Button
+        #GUI Functions
         self.__createToolbar()
         
-        #Show Graph
+        #Show Graph Button
         plt.legend()
-        graphBtn = Button(self.__root, text='Show Plots', command=plt.show)
+        graphBtn = Button(self.__root, text='Show Plots', command=self.showPlots)
         graphBtn.pack()
         
-        matrix = numMatrixGUI(self.__root, numMatrix([[1,0],[0,1]]), 'My First Matrix')
-        matrix.pack()
+        #Line
+        line = Label(self.__root, text="---------------------------------------------------")
+        line.pack()
+    
+    def showPlots(self):
+        plt.legend()
+        plt.show()
         
+    def multiplyGUI(self, m1 : numMatrix, m2 : numMatrix, name : str):
+        matrix = numMatrixGUI(self.__root, multiply(m1, m2), name)
+        matrix.pack()
+    
     def close(self):
         self.__root.destroy()
         
@@ -143,8 +155,8 @@ class gui:
         #Plot Menu
         plotMenu = Menu(menu, tearoff=0)
         
-        plotMenu.add_command(label="Show Plots", command=plt.show, accelerator="Cmd+P")
-        self.__root.bind_all('<Command-p>', lambda c : plt.show())        
+        plotMenu.add_command(label="Show Plots", command=self.showPlots, accelerator="Cmd+P")
+        self.__root.bind_all('<Command-p>', lambda c : self.showPlots())        
         
         menu.add_cascade(label='File', menu=fileMenu)
         menu.add_cascade(label='Create', menu=createMenu)
