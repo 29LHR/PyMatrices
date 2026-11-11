@@ -105,4 +105,4 @@ def multiply(A : numMatrix, B : numMatrix)-> numMatrix:
             
         valsC.append(apdList)
     
-    return intMatrix(valsC)
+    return numMatrix(valsC)
