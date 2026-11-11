@@ -1,7 +1,7 @@
 from tkinter import Tk, Toplevel, Label, Entry, Button, Frame, Menu
 from typing import Union
 from pyMatrices import numMatrix, multiply
-
+lazy import matplotlib.pyplot as plt
 class numMatrixGUI():
     def __init__(self, root : Union[Tk, Toplevel, Frame], matrix : numMatrix, name : str):
         self.__root = Frame(root)
@@ -10,10 +10,14 @@ class numMatrixGUI():
         self.__createGUI()
     
     def __createGUI(self)-> None:
+        def plot():
+            self.__matrix.plot(self.__name,"#7C0101",'o')
+            
         frame = self.__root
-        
         title = Label(frame, text=self.__name, anchor='center')
         title.grid(column=0, row=0, columnspan=self.__matrix.width +2)
+        plotBtn = Button(frame, text='Plot', anchor='center', command=plot)
+        plotBtn.grid(column=0, row=self.__matrix.height+2, columnspan=self.__matrix.width +2)
         
         vals = self.__matrix.values()
         labels = []
@@ -91,6 +95,11 @@ class gui:
         
         #Create a Matrix Button
         self.__createToolbar()
+        
+        #Show Graph
+        plt.legend()
+        graphBtn = Button(self.__root, text='Show Plots', command=plt.show)
+        graphBtn.pack()
         
         matrix = numMatrixGUI(self.__root, numMatrix([[1,0],[0,1]]), 'My First Matrix')
         matrix.pack()
