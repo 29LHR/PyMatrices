@@ -40,25 +40,45 @@ class numMatrixGUI():
 
 class createMatrixMenu:
     def __init__(self, root: Union[Tk, Toplevel], height: int, width: int) -> None:
-        self.__root = Toplevel(root)
-        self.__createInputs()
-        self.dims = (width, height)
+        self.__super = root
+        self.__root = Toplevel(self.__super)
+        self.__root.geometry("200x200")
+        self.__root.title('New Matrix')
         
+        self.dims = (width, height)
+        self.__createInputs()
+    
+    def __createMatrix(self):
+        self.__matrix = []
+        for row in range(self.dims[1]):
+            rowNums = []
+            for col in range(self.dims[0]):
+                rowNums.append(int(self.__inputs[row][col].get()))
+            self.__matrix.append(rowNums)
+        
+        self.__matrix = numMatrix(self.__matrix)
+        self.__matrixGUI = numMatrixGUI(self.__super,self.__matrix,name=self.__name.get())
+
     def __createInputs(self):
         nameFrame = Frame(self.__root)
-        name = Entry(nameFrame)
+        self.__name = Entry(nameFrame, width=10)
         nameLbl = Label(nameFrame, text='Name:', anchor='center')
-        name.grid(row=0, column=1); nameLbl.grid(row=0, column=0)
+        self.__name.grid(row=0, column=1); nameLbl.grid(row=0, column=0)
         nameFrame.pack()
         
         frame = Frame(self.__root)
-        inputs = []
-        for row in range(self.dims[0]):
+        self.__inputs = []
+        for row in range(self.dims[1]):
             rowInp = []
-            for col in range(self.dims[1]):
-                rowInp.append(Entry(frame))
-                rowInp[-1].grid(row=row, col=0)
-            inputs.append(rowInp)
+            for col in range(self.dims[0]):
+                rowInp.append(Entry(frame, width=1))
+                rowInp[-1].grid(row=row, column=col)
+            self.__inputs.append(rowInp)
+        
+        frame.pack()
+        
+        createBtn = Button(self.__root, text='Create', command=self.__createMatrix)
+        createBtn.pack()
             
      
 class gui:
@@ -76,14 +96,24 @@ class gui:
         matrix.pack()
         
     def __createToolbar(self):
-        def createMatrix():
-            print('Creating a matrix magic')
+        def createMatrix(height: int, width: int):
+            createMatrixMenu(self.__root, height, width)
         
         menu = Menu(self.__root)
         
         #Create Menu
         createMenu = Menu(menu, tearoff=0)
-        createMenu.add_command(label='New Matrix', command=createMatrix)
+        
+        createMenu.add_command(label='New 2x2 Matrix', command=lambda : createMatrix(2,2), accelerator='Cmd+N')
+        self.__root.bind_all('<Command-n>', lambda c : createMatrix(2,2))
+        createMenu.add_command(label='New 2x1 Matrix', command=lambda : createMatrix(2,1), accelerator="Cmd+Shift+N")
+        self.__root.bind_all('<Command-N>', lambda c : createMatrix(2,1))
+        createMenu.add_command(label='New 2x4 Matrix', command=lambda : createMatrix(2,4), accelerator="Alt+N")
+        self.__root.bind_all('<Alt-n>', lambda c : createMatrix(2,4))
+        
+        createMenu.add_separator()
+        
+        #Custom Matrix Logic Coming
         
         menu.add_cascade(label='Create', menu=createMenu)
         root.config(menu=menu)
