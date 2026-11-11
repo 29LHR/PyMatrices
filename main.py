@@ -1,26 +1,32 @@
-from tkinter import Tk, Toplevel, Label, Entry, Button, Frame, Menu
+from tkinter import Tk, Toplevel, Label, Entry, Button, Frame, Menu, ttk
 from typing import Union
 from pyMatrices import numMatrix, unitSquare, identity, multiply
 lazy import matplotlib.pyplot as plt
 lazy import random as r
 
 class numMatrixGUI():
-    def __init__(self, root : Union[Tk, Toplevel, Frame], matrix : numMatrix, name : str):
+    def __init__(self, root : Union[Tk, Toplevel, Frame], super : gui, matrix : numMatrix, name : str):
         self.__root = Frame(root)
         self.__matrix = matrix
-        self.__name = name
+        self.name = name
+        
+        super.matrices.append(self)
+        super.mVals.append(name)
+        super.m1['values'] = super.mVals
+        super.m2['values'] = super.mVals
+        
         self.__createGUI()
     
+    def plot(self):
+        options = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F']
+        color = f'#{r.choice(options)}{r.choice(options)}{r.choice(options)}{r.choice(options)}{r.choice(options)}{r.choice(options)}'
+        self.__matrix.plot(self.name,color,'o')
+                
     def __createGUI(self)-> None:
-        def plot():
-            options = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F']
-            color = f'#{r.choice(options)}{r.choice(options)}{r.choice(options)}{r.choice(options)}{r.choice(options)}{r.choice(options)}'
-            self.__matrix.plot(self.__name,color,'o')
-            
         frame = self.__root
-        title = Label(frame, text=self.__name, anchor='center')
+        title = Label(frame, text=self.name, anchor='center')
         title.grid(column=0, row=0, columnspan=self.__matrix.width +2)
-        plotBtn = Button(frame, text='Plot', anchor='center', command=plot)
+        plotBtn = Button(frame, text='Plot', anchor='center', command=self.plot)
         plotBtn.grid(column=0, row=self.__matrix.height+2, columnspan=self.__matrix.width +2)
         
         vals = self.__matrix.values()
@@ -39,6 +45,8 @@ class numMatrixGUI():
         
         frame.pack()
             
+    def getMatrix(self)->numMatrix:
+        return self.__matrix
     
     def pack(self)-> None:
         self.__root.pack()
@@ -47,9 +55,10 @@ class numMatrixGUI():
         self.__root.grid(row=row, column=column, columnspan=columnspan, rowspan=rowspan)
 
 class createMatrixMenu:
-    def __init__(self, root: Union[Tk, Toplevel], height: int, width: int) -> None:
+    def __init__(self, root: gui, height: int, width: int) -> None:
         self.__super = root
-        self.__root = Toplevel(self.__super)
+        self.__superRoot = self.__super.root
+        self.__root = Toplevel(self.__superRoot)
         self.__root.geometry("200x200")
         self.__root.title('New Matrix')
         
@@ -65,7 +74,7 @@ class createMatrixMenu:
             self.__matrix.append(rowNums)
         
         self.__matrix = numMatrix(self.__matrix)
-        self.__matrixGUI = numMatrixGUI(self.__super,self.__matrix,name=self.__name.get())
+        GUI = numMatrixGUI(self.__super.root, self.__super, self.__matrix, self.__name.get())
 
     def __createInputs(self):
         nameFrame = Frame(self.__root)
@@ -92,37 +101,67 @@ class createMatrixMenu:
 class gui:
     def __init__(self, root: Union[Tk, Toplevel]):
         self.__root = root
+        self.matrices = []
         
         #Styling Stuff
         self.__root.title('Matrix Calculator')
-        self.__root.geometry('400x400')
+        self.__root.geometry('500x400')
         
         #GUI Functions
+        self.__createButtons()
         self.__createToolbar()
+    
+    def multiplyCmd(self):
+        m1 = self.matrices[self.mVals.index(self.m1.get())]
+        m2 = self.matrices[self.mVals.index(self.m2.get())]
+        self.multiplyGUI(m1.getMatrix(), m2.getMatrix(), f'{self.m1.get()} x {self.m2.get()}')
         
+    def __createButtons(self):
+        buttonFrame = Frame(self.__root)
         #Show Graph Button
-        plt.legend()
-        graphBtn = Button(self.__root, text='Show Plots', command=self.showPlots)
-        graphBtn.pack()
+        graphBtn = Button(buttonFrame, text='Show Plots', command=self.showPlots)
+        graphBtn.grid(row=0, column=0)
+        
+        multiplyBtn = Button(buttonFrame, text='Multiply', command=self.multiplyCmd)
+        self.m1 = ttk.Combobox(buttonFrame, state='readonly', width=10)
+        self.mVals = [matrix.name for matrix in self.matrices]
+        self.m1['values'] = self.mVals
+        self.m2 = ttk.Combobox(buttonFrame, state='readonly', width=10)
+        self.m2['values'] = self.mVals
+        
+        multiplyBtn.grid(row=0, column=1)
+        self.m1.grid(row=0, column=2)
+        self.m2.grid(row=0, column=3)
+        
+        buttonFrame.pack()
         
         #Line
-        line = Label(self.__root, text="---------------------------------------------------")
+        line = Label(self.__root, text="--------------------------------------------------------")
         line.pack()
     
     def showPlots(self):
         plt.legend()
         plt.show()
         
+    def plotAll(self):
+        for matrix in self.matrices:
+            matrix.plot()
+        
     def multiplyGUI(self, m1 : numMatrix, m2 : numMatrix, name : str):
-        matrix = numMatrixGUI(self.__root, multiply(m1, m2), name)
+        print('Printing multiplied matrix')
+        matrix = numMatrixGUI(self.__root, self, multiply(m1, m2), name)
         matrix.pack()
     
     def close(self):
         self.__root.destroy()
+    
+    @property
+    def root(self):
+        return self.__root
         
     def __createToolbar(self):
         def createMatrix(height: int, width: int):
-            createMatrixMenu(self.__root, height, width)
+            createMatrixMenu(self, height, width)
         
         menu = Menu(self.__root)
         
@@ -144,10 +183,10 @@ class gui:
         
         createMenu.add_separator()
         
-        createMenu.add_command(label="Create Unit Square", command=lambda : numMatrixGUI(self.__root, unitSquare(), name="Unit Square"), accelerator='Control+N')
-        self.__root.bind_all('<Control-n>', lambda c : numMatrixGUI(self.__root, unitSquare(), name="Unit Square"))
-        createMenu.add_command(label="Create Identity Matrix", command=lambda : numMatrixGUI(self.__root, identity(), name="Identity"), accelerator='Control+Shift+N')
-        self.__root.bind_all('<Control-N>', lambda c : numMatrixGUI(self.__root, identity(), name="Identity"))
+        createMenu.add_command(label="Create Unit Square", command=lambda : numMatrixGUI(self.__root, self, unitSquare(), name="Unit Square"), accelerator='Control+N')
+        self.__root.bind_all('<Control-n>', lambda c : numMatrixGUI(self.__root, self, unitSquare(), name="Unit Square"))
+        createMenu.add_command(label="Create Identity Matrix", command=lambda : numMatrixGUI(self.__root, self, identity(), name="Identity"), accelerator='Control+Shift+N')
+        self.__root.bind_all('<Control-N>', lambda c : numMatrixGUI(self.__root, self, identity(), name="Identity"))
         
         createMenu.add_separator()
         #Custom Matrix Creation Magic
@@ -155,8 +194,10 @@ class gui:
         #Plot Menu
         plotMenu = Menu(menu, tearoff=0)
         
-        plotMenu.add_command(label="Show Plots", command=self.showPlots, accelerator="Cmd+P")
-        self.__root.bind_all('<Command-p>', lambda c : self.showPlots())        
+        plotMenu.add_command(label="Plot All", command=self.plotAll, accelerator="Cmd+P")
+        self.__root.bind_all('<Command-p>', lambda c : self.plotAll())
+        plotMenu.add_command(label="Show Plots", command=self.showPlots, accelerator="Control+P")
+        self.__root.bind_all('<Control-p>', lambda c : self.showPlots())     
         
         menu.add_cascade(label='File', menu=fileMenu)
         menu.add_cascade(label='Create', menu=createMenu)
