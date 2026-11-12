@@ -45,6 +45,7 @@ A child of the **Matrix** class which can only contain number values within its 
 - _multiply(**A**: intMatrix, **B**: intMatrix)->intMatrix_: returns **AB**
 
 # Example GUI
+
 A matrix calculator. View all of the classes and functions of pyMatrices in a user orientated app.
 
 # Classes
@@ -53,44 +54,54 @@ A matrix calculator. View all of the classes and functions of pyMatrices in a us
 The numMatrixGUI displays pyMatrices' **numMatrix** in the root gui.
 
 ### Methods
-- *plot()*: Calls the numMatrix's *plot()* method
-- *__createGUI()*: Creates the Labels needed to display the matrix as well as a plot button and puts them in a frame and packs it to the root
-- *getMatrix()*: Returns the Matrix
-- *pack()*: Uses the tkinter *pack* method to pack the Frame
-- *grid()*: Uses the tkinter *grid* method to plot the Frame on a grid
+
+- _plot()_: Calls the numMatrix's _plot()_ method
+- _\_\_createGUI()_: Creates the Labels needed to display the matrix as well as a plot button and puts them in a frame and packs it to the root
+- _getMatrix()_: Returns the Matrix
+- _pack()_: Uses the tkinter _pack_ method to pack the Frame
+- _grid()_: Uses the tkinter _grid_ method to plot the Frame on a grid
 
 ### Public Variables
+
 - name: The name of the matrix being displayed
 
 ## createMatrixMenu:
+
 Creates a toplevel which has the inputs in which one can register a matrix with teh application
 
 ### Methods
-- *__createMatrix()*: Creates a numMatrixGUI in the root
-- *__createInputs()*: Creates all of the Entry widgets needed to create a matrix of specified dimensions
+
+- _\_\_createMatrix()_: Creates a numMatrixGUI in the root
+- _\_\_createInputs()_: Creates all of the Entry widgets needed to create a matrix of specified dimensions
 
 ### Public Variables
+
 - dims: The dimensions of the Matrix it's creating in a set
 
 ## gui
+
 Creates the base gui of the application.
 
 ### Methods
-- *multiplyCmd()*: Calls the *multiplyGUI()* method from a button or keybind command
-- *multiplyGUI()*: Creates the GUI for the *multiply* function of the pyMatrices library
-- *__createButtons()*: Creates the Buttons used at the top of the screen to perform operations
-- *showPlots()*: plots a legend and then shows using *plt.show()* from matplotlib
-- *close()*: destroys the application
-- *root*: returns the root of the application
-- *__createToolbar()*: Creates the menus and commands in the toolbar used for the application
+
+- _multiplyCmd()_: Calls the _multiplyGUI()_ method from a button or keybind command
+- _multiplyGUI()_: Creates the GUI for the _multiply_ function of the pyMatrices library
+- _\_\_createButtons()_: Creates the Buttons used at the top of the screen to perform operations
+- _showPlots()_: plots a legend and then shows using _plt.show()_ from matplotlib
+- _close()_: destroys the application
+- _root_: returns the root of the application
+- _\_\_createToolbar()_: Creates the menus and commands in the toolbar used for the application
 
 ### Public Variables
+
 - matrices: A list of all matrices that are being displayed
 
 # Coming Soon...
+
 - More arithmetic functions
 - Custom matrices in the GUI
 - Scroll frames instead of really tall GUI
 
 # AI Notice
+
 No Artificial Intelligence was used in creating this repository.
