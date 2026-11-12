@@ -87,5 +87,10 @@ Creates the base gui of the application.
 ### Public Variables
 - matrices: A list of all matrices that are being displayed
 
+# Coming Soon...
+- More arithmetic functions
+- Custom matrices in the GUI
+- Scroll frames instead of really tall GUI
+
 # AI Notice
 No Artificial Intelligence was used in creating this repository.
