@@ -1,6 +1,6 @@
-from tkinter import Tk, Toplevel, Label, Entry, Button, Frame, Menu, ttk
+from tkinter import Tk, Toplevel, Label, Entry, Button, Frame, Menu, ttk, messagebox
 from typing import Union
-from pyMatrices import numMatrix, unitSquare, identity, multiply
+from pyMatrices import numMatrix, unitSquare, identity, multiply, IncompatibleMatrixError
 lazy import matplotlib.pyplot as plt
 lazy import random as r
 
@@ -149,8 +149,11 @@ class gui:
         
     def multiplyGUI(self, m1 : numMatrix, m2 : numMatrix, name : str):
         print('Printing multiplied matrix')
-        matrix = numMatrixGUI(self.__root, self, multiply(m1, m2), name)
-        matrix.pack()
+        try:
+            matrix = numMatrixGUI(self.__root, self, multiply(m1, m2), name)
+            matrix.pack()
+        except IncompatibleMatrixError:
+            error = messagebox.showwarning('Incompatible Matrices', 'The matrices need to have similar dimensions in order to multiply. E.g. A 2x2 multiplied by a 2x4.')
     
     def close(self):
         self.__root.destroy()
