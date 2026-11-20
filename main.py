@@ -166,6 +166,12 @@ class gui:
         def createMatrix(height: int, width: int):
             createMatrixMenu(self, height, width)
         
+        def createSquare(event):
+            key = event.char
+            if key.isdigit() and key != '0':
+                key = int(key)
+                createMatrix(key, key)
+        
         menu = Menu(self.__root)
         
         #File Menu
@@ -186,10 +192,15 @@ class gui:
         
         createMenu.add_separator()
         
+        #Adding Square Number Matrices
+        self.__root.bind("<Key>", createSquare)
+                
+        createMenu.add_separator()
+        
         createMenu.add_command(label="Create Unit Square", command=lambda : numMatrixGUI(self.__root, self, unitSquare(), name="Unit Square"), accelerator='Control+N')
         self.__root.bind_all('<Control-n>', lambda c : numMatrixGUI(self.__root, self, unitSquare(), name="Unit Square"))
-        createMenu.add_command(label="Create Identity Matrix", command=lambda : numMatrixGUI(self.__root, self, identity(), name="Identity"), accelerator='Control+Shift+N')
-        self.__root.bind_all('<Control-N>', lambda c : numMatrixGUI(self.__root, self, identity(), name="Identity"))
+        createMenu.add_command(label="Create Identity Matrix", command=lambda : numMatrixGUI(self.__root, self, identity(), name="Identity"), accelerator='Command+I')
+        self.__root.bind_all('<Command-i>', lambda c : numMatrixGUI(self.__root, self, identity(), name="Identity"))
         
         createMenu.add_separator()
         #Custom Matrix Creation Magic
