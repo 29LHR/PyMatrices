@@ -2,8 +2,15 @@ lazy import matplotlib.pyplot as plt
 
 #Custom Error Messages  
 class IncompatibleMatrixError(Exception):
-    def __init__(self) -> None:
-        super().__init__("The transforming matrix's width needs to be the same as the original matrix's height")
+    def __init__(self, type) -> None:
+        match type:
+            case "*":
+                super().__init__("The transforming matrix's width needs to be the same as the original matrix's height")
+            case "+":
+                super().__init__("To add matrices they must be of the same dimensions")
+            case _:
+                super().__init__("Matrices are incompatible for the chosen function")
+            
 
 class Matrix:
     def __init__(self, vals : list):
@@ -74,7 +81,7 @@ class identity(numMatrix):
         super().__init__([[1,0], [0,1]])
         
 #Arithmetic Functions
-def multiply(A : numMatrix, B : numMatrix)-> numMatrix:
+def multiply(A : numMatrix, B : numMatrix)-> numMatrix: 
     def multiplyPts(a: list, b: list):
         num = 0
         for i in range(len(a)):
@@ -82,7 +89,7 @@ def multiply(A : numMatrix, B : numMatrix)-> numMatrix:
         return num
     
     if A.width != B.height:
-        raise IncompatibleMatrixError()
+        raise IncompatibleMatrixError("*")
 
     #Check they are not the identity matrix
     if type(A) == identity:
@@ -108,3 +115,15 @@ def multiply(A : numMatrix, B : numMatrix)-> numMatrix:
         valsC.append(apdList)
     
     return numMatrix(valsC)
+
+def add(A: numMatrix, B: numMatrix) -> numMatrix:
+    if A.width != B.width or A.height != B.height:
+        raise IncompatibleMatrixError('+')
+    
+    aVals = A.values(); bVals = B.values()
+    nVals = [[0 for i in range(len(aVals[0]))] for i in range(len(aVals))]
+    for row in range(len(aVals)):
+        for col in range(len(aVals[row])):
+            nVals[row][col] = aVals[row][col] + bVals[row][col]
+    
+    return numMatrix(nVals)
